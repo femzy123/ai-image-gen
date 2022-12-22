@@ -1,7 +1,7 @@
 import Head from "next/head";
 import { useState } from "react";
 import axios from "axios";
-import DisplayImages from "../components/displayImages";
+import DisplayImages from "../components/DisplayImages";
 
 export default function Home() {
   const [prompt, setPrompt] = useState("");
