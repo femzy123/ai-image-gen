@@ -1,10 +1,25 @@
 import Head from "next/head";
 import { useState } from "react";
+import axios from "axios";
 
 export default function Home() {
-  const [prompt, setPrompt] = useState();
+  const [prompt, setPrompt] = useState("");
   const [number, setNumber] = useState(1);
   const [size, setSize] = useState("small");
+  const [images, setImages] = useState(null);
+
+  const generateImage = async (e) => {
+    e.preventDefault()
+    const data = {
+      prompt,
+      n: number,
+      size
+    }
+
+    const res = await axios.post("/api/imgGenerator", data);
+
+    setImages(res.data.data.map((item) => item.url));
+  }
 
   return (
     <div className="w-screen h-screen p-10 flex justify-center">
@@ -15,7 +30,7 @@ export default function Home() {
       </Head>
 
       <main>
-        <div>
+        <div className="mb-6">
           <h1 className="text-4xl text-gray-600 text-center">
             Fem-AI Image Generator
           </h1>
@@ -25,14 +40,15 @@ export default function Home() {
           </h6>
         </div>
 
-        <form className="flex space-x-10">
-          <div className="flex flex-col">
+        <form className="grid grid-cols-1 md:grid-cols-6 gap-4" onSubmit={generateImage}>
+          <div className="md:col-span-3 flex flex-col">
             <label>Describe the image you want to generate</label>
             <input
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
               required
               placeholder="e.g. A cat drinking tea"
+              className="border border-gray-400 rounded px-2 py-1 text-gray-600"
             />
           </div>
 
@@ -45,24 +61,31 @@ export default function Home() {
               required
               min={1}
               max={5}
+              className="border border-gray-400 rounded px-2 py-1 text-gray-600"
             />
           </div>
 
           <div className="flex flex-col">
             <label>Size</label>
-            <select value={size} onChange={(e) => setSize(e.target.value)}>
+            <select
+              value={size}
+              onChange={(e) => setSize(e.target.value)}
+              className="border border-gray-400 rounded px-2 py-1 text-gray-600"
+            >
               <option value="small">Small</option>
               <option value="medium">Medium</option>
               <option value="large">Large</option>
             </select>
           </div>
 
-          <button>Generate</button>
+          <div className="flex items-end">
+            <button className="w-full bg-gray-700 hover:bg-gray-600 text-white border border-gray-400 rounded px-2 py-1">
+              Generate
+            </button>
+          </div>
         </form>
 
-        <div>
-          
-        </div>
+        <div></div>
       </main>
     </div>
   );
